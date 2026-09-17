@@ -16,6 +16,7 @@
   function announce(text) { live.textContent = text; }
 
   function showView(name) {
+    closeSourceView();
     Object.keys(views).forEach(function (key) {
       var active = key === name;
       views[key].classList.toggle('is-active', active);
@@ -37,6 +38,24 @@
 
   /* ---------- source highlighting ---------- */
   var sourceButtons = Array.prototype.slice.call(document.querySelectorAll('[data-source]'));
+  var smallScreen = window.matchMedia('(max-width: 760px)');
+  var closeSourceBtn = document.getElementById('closeSource');
+  var lastSourceBtn = null;
+
+  function openSourceView(trigger) {
+    if (!smallScreen.matches) return;
+    lastSourceBtn = trigger || null;
+    document.body.classList.add('source-open');
+    closeSourceBtn.focus();
+  }
+  function closeSourceView() {
+    if (!document.body.classList.contains('source-open')) return;
+    document.body.classList.remove('source-open');
+    if (lastSourceBtn) { lastSourceBtn.focus(); lastSourceBtn = null; }
+  }
+  closeSourceBtn.addEventListener('click', closeSourceView);
+  smallScreen.addEventListener('change', function () { if (!smallScreen.matches) closeSourceView(); });
+
   function clearHighlights() {
     docScroll.querySelectorAll('.is-highlight').forEach(function (el) { el.classList.remove('is-highlight'); });
     sourceButtons.forEach(function (b) { b.classList.remove('is-active'); });
@@ -56,8 +75,13 @@
         if (!first) first = el;
       });
       if (first) {
-        var top = first.offsetTop - docScroll.clientHeight / 3;
-        docScroll.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
+        if (smallScreen.matches) {
+          openSourceView(btn);
+          first.scrollIntoView({ block: 'center' });
+        } else {
+          var top = first.offsetTop - docScroll.clientHeight / 3;
+          docScroll.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
+        }
         announce('Supporting sentence highlighted in the source document.');
       }
     });
@@ -163,7 +187,9 @@
     if (!otherMenu.hidden && !e.target.closest('.menu-wrap')) closeMenu();
   });
   document.addEventListener('keydown', function (e) {
-    if (e.key === 'Escape' && !otherMenu.hidden) { closeMenu(); otherBtn.focus(); }
+    if (e.key !== 'Escape') return;
+    if (!otherMenu.hidden) { closeMenu(); otherBtn.focus(); return; }
+    closeSourceView();
   });
 
   /* ---------- overview actions ---------- */
@@ -175,6 +201,7 @@
 
   /* ---------- start over ---------- */
   function reset() {
+    closeSourceView();
     clearHighlights();
     ['medList', 'recList'].forEach(function (id) { document.getElementById(id).hidden = true; });
     document.getElementById('medToggle').textContent = 'Show 5 entries';

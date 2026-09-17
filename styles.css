@@ -43,7 +43,7 @@ ul { list-style: none; padding: 0; }
   padding: 10px 28px; background: var(--navy); color: #fff;
 }
 .brand { display: flex; align-items: center; gap: 10px; }
-.brand-logo { width: 36px; height: 36px; border-radius: 50%; background: #fff; flex: none; }
+.brand-logo { width: 34px; height: 34px; flex: none; }
 .brand-name { font-size: 18px; font-weight: 600; letter-spacing: .01em; }
 .brand-sub { font-size: 14px; color: #C3D4E3; }
 .disclaimer { font-size: 13px; color: #D4E1EC; }
@@ -236,6 +236,83 @@ main { padding: 20px 28px 8px; }
   .field { padding: 7px 0; }
   .panel { padding: 13px 16px; margin-bottom: 12px; }
   .actions { margin-top: 12px; padding-top: 11px; }
+}
+
+/* ---------- phones and small tablets ---------- */
+.doc-head-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+.btn-back { display: none; }
+
+@media (max-width: 760px) {
+  body { font-size: 15px; }
+  main { padding: 14px 14px 4px; }
+
+  .app-bar { flex-direction: column; align-items: flex-start; gap: 4px; padding: 10px 14px; }
+  .disclaimer { font-size: 12px; line-height: 1.4; }
+  .patient-bar { padding: 12px 14px; gap: 12px; }
+  .pt h1 { font-size: 19px; }
+  .pt p { font-size: 13px; }
+
+  .steps { padding: 0 6px; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .step { white-space: nowrap; padding: 12px 12px; }
+
+  .panel { padding: 13px 14px; margin-bottom: 12px; }
+
+  /* tables read as stacked blocks instead of squeezed columns */
+  .table thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+  .table tbody tr { display: block; padding: 10px 0; border-bottom: 1px solid var(--line-soft); }
+  .table tbody tr:last-child { border-bottom: 0; }
+  .table th, .table td { display: block; border: 0; padding: 0; }
+  .table tbody th[scope="row"] { white-space: normal; font-size: 15px; }
+  .table tbody td { color: var(--ink-soft); font-size: 14px; margin-top: 2px; }
+  .row-new th, .row-new td { background: none; }
+
+  .work-item { grid-template-columns: 1fr; gap: 10px; }
+
+  /* fields stack: label, value, then the source action */
+  .field { grid-template-columns: 1fr; gap: 4px; padding: 12px 0; }
+  .field dt { font-size: 13px; }
+  .field dd { font-size: 15px; }
+  .field .btn-link { grid-column: 1; justify-self: start; margin-top: 2px; padding: 8px 0; }
+  .field-flag { justify-self: start; }
+
+  /* comfortable touch targets */
+  .btn { min-height: 44px; padding: 11px 16px; }
+  .btn-link, .btn-toggle { min-height: 0; }
+  .action-row .btn { width: 100%; }
+  .menu-wrap { width: 100%; }
+  .menu { left: 0; right: 0; min-width: 0; }
+  .menu button { padding: 12px 14px; }
+
+  .review-head { flex-direction: column; align-items: flex-start; gap: 4px; }
+  .review-head h2 { font-size: 17px; }
+
+  /* the source document opens as a full screen view, not a side column */
+  .panel-doc { display: none; }
+  body.source-open .panel-doc {
+    display: block; position: fixed; inset: 0; z-index: 40; margin: 0;
+    border-radius: 0; overflow-y: auto; -webkit-overflow-scrolling: touch;
+  }
+  body.source-open { overflow: hidden; }
+  body.source-open .btn-back { display: inline-block; }
+  body.source-open .doc-head-row {
+    position: sticky; top: 0; z-index: 2; align-items: center;
+    background: var(--surface); border-bottom: 1px solid var(--line);
+    margin: -13px -14px 10px; padding: 10px 14px;
+  }
+  .doc-scroll { height: auto; max-height: none; overflow: visible; border: 0; background: none; padding: 0; }
+  .doc { padding: 16px 16px 40px; }
+
+  .overview-side { margin-top: 12px; }
+  .sheet { padding: 18px 16px; }
+  .sheet-head { flex-direction: column; align-items: flex-start; gap: 6px; }
+  .sheet-meta { text-align: left; white-space: normal; }
+  .sheet-cols { gap: 0; }
+  .app-foot { padding: 14px 14px 22px; }
+}
+
+@media (max-width: 400px) {
+  .brand-sub { display: none; }
+  .step { font-size: 13px; padding: 12px 10px; }
 }
 
 @media (prefers-reduced-motion: reduce) {

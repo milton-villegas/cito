@@ -1,4 +1,6 @@
-<img src="assets/airbridge-logo.png" alt="AirBridge" width="88">
+<p align="center">
+  <img src="assets/airbridge-logo.png" alt="AirBridge" width="200">
+</p>
 
 # AirBridge — interactive proof of concept
 
