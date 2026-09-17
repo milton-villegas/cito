@@ -1,0 +1,355 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AirBridge — COPD document review (proof of concept)</title>
+<meta name="description" content="AirBridge organizes authorized COPD documents and a hospital discharge report into one structured, source-linked overview for GP review. Interactive proof of concept with synthetic data.">
+<link rel="icon" href="assets/favicon.png" type="image/png">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header class="app-bar">
+  <div class="brand">
+    <img class="brand-logo" src="assets/airbridge-logo.png" alt="" width="36" height="36">
+    <span class="brand-name">AirBridge</span>
+    <span class="brand-sub">COPD document review</span>
+  </div>
+  <p class="disclaimer">Interactive proof of concept · Synthetic patient data · Not for clinical use</p>
+</header>
+
+<div class="patient-bar">
+  <div class="pt">
+    <h1>John Doe</h1>
+    <p>Born 14 March 1958 · Patient ID 104582</p>
+  </div>
+  <button type="button" class="btn btn-quiet" id="startOver">Start over</button>
+</div>
+
+<nav class="steps" aria-label="Workflow">
+  <button type="button" class="step is-current" id="navRecord" data-view="record" aria-current="step">1. Patient record</button>
+  <button type="button" class="step" id="navReview" data-view="review" disabled>2. Document review</button>
+  <button type="button" class="step" id="navOverview" data-view="overview" disabled>3. COPD overview</button>
+</nav>
+
+<main id="main">
+
+  <!-- ============ 1 · PATIENT RECORD ============ -->
+  <section class="view is-active" id="view-record" aria-labelledby="h-record">
+    <h2 class="sr-only" id="h-record">Patient record</h2>
+
+    <div class="record-grid">
+      <div>
+        <section class="panel">
+          <h3>COPD timeline</h3>
+          <table class="table">
+            <thead>
+              <tr><th scope="col">Date</th><th scope="col">Documented event</th><th scope="col">Source</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th scope="row">2021</th>
+                <td>COPD diagnosis documented</td>
+                <td>GP problem list</td>
+              </tr>
+              <tr>
+                <th scope="row">Previous 12 months<span class="note-inline">Exact date not documented</span></th>
+                <td>One moderate exacerbation, no hospital admission</td>
+                <td>Previous COPD history</td>
+              </tr>
+              <tr class="row-new">
+                <th scope="row">10–14 September 2026</th>
+                <td>Hospital admission for acute COPD exacerbation</td>
+                <td>Hospital discharge report</td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section class="panel">
+          <h3>Latest documented pulmonary function</h3>
+          <p class="values">FEV1 1.75 L (58% predicted) · FVC 3.42 L (88% predicted) · FEV1/FVC 0.51</p>
+          <p class="meta">Measurement date not available in the source document · Outpatient spirometry reference</p>
+        </section>
+      </div>
+
+      <div>
+        <section class="panel">
+          <h3>Documents in this practice</h3>
+          <p class="panel-hint">Authorized documents available in this GP practice.</p>
+          <table class="table table-docs">
+            <thead>
+              <tr><th scope="col">Document</th><th scope="col">Source</th><th scope="col">Date</th></tr>
+            </thead>
+            <tbody>
+              <tr><th scope="row">GP problem list</th><td>This practice</td><td>Ongoing record</td></tr>
+              <tr><th scope="row">Previous COPD history</th><td>This practice</td><td>Event date not documented</td></tr>
+              <tr><th scope="row">Outpatient spirometry reference</th><td>External laboratory</td><td>Date not available</td></tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section class="panel panel-work">
+          <h3>Received for review</h3>
+          <div class="work-item">
+            <div class="work-head">
+              <p class="work-title">Hospital discharge report</p>
+              <p class="work-meta">Cantonal Hospital Zurich · Discharged 14 September 2026 · 1 document</p>
+            </div>
+            <p class="status status-pending" id="queueStatus">Pending review</p>
+            <button type="button" class="btn btn-primary" id="openDoc">Review document</button>
+          </div>
+        </section>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 2 · DOCUMENT REVIEW ============ -->
+  <section class="view" id="view-review" aria-labelledby="h-review" hidden>
+    <div class="review-head">
+      <h2 id="h-review">Hospital discharge report — document review</h2>
+      <p class="status status-pending" id="reviewStatus">Pending review</p>
+    </div>
+
+    <div class="review-grid">
+      <section class="panel panel-doc" aria-labelledby="h-source">
+        <h3 id="h-source">Source document</h3>
+        <p class="panel-hint">Cantonal Hospital Zurich · discharge report, text-based PDF</p>
+        <div class="doc-scroll" id="docScroll" tabindex="0" role="region" aria-label="Hospital discharge report text">
+          <article class="doc">
+            <header class="doc-head">
+              <p class="doc-hosp">Cantonal Hospital Zurich</p>
+              <p class="doc-dept">Department of Internal Medicine · Discharge report</p>
+            </header>
+            <p class="doc-line"><span id="s-patient">Patient: John Doe, born 14 March 1958. Patient ID 104582.</span></p>
+            <p class="doc-line"><span id="s-dates">Admission: 10 September 2026. Discharge: 14 September 2026.</span></p>
+
+            <h4>Diagnoses</h4>
+            <p class="doc-line"><span id="s-dx">1. Acute exacerbation of COPD; GOLD 2 airflow obstruction.</span></p>
+            <p class="doc-line"><span id="s-trigger">Most likely triggered by viral respiratory tract infection.</span></p>
+            <p class="doc-line">No evidence of pneumonia.</p>
+            <p class="doc-line">Current smoker, approximately 40 pack-years.</p>
+            <p class="doc-line">2. Arterial hypertension.</p>
+
+            <h4>History</h4>
+            <p class="doc-line">Four days of progressive dyspnoea, increased cough, yellowish sputum and reduced exercise tolerance.</p>
+            <p class="doc-line">COPD diagnosed in 2021.</p>
+            <p class="doc-line"><span id="s-spiro">Most recent outpatient spirometry: FEV1 1.75 L (58% predicted), FVC 3.42 L (88% predicted), FEV1/FVC 0.51.</span></p>
+            <p class="doc-line"><span id="s-prev">He has had one previous moderate COPD exacerbation during the past 12 months without hospitalisation.</span></p>
+            <p class="doc-line">No long-term oxygen therapy.</p>
+
+            <h4>Examination on admission</h4>
+            <p class="doc-line">Alert and oriented; moderately dyspnoeic at rest.</p>
+            <p class="doc-line"><span id="s-o2adm">SpO₂ 88% on room air; 92% with 2 L/min oxygen.</span></p>
+            <p class="doc-line">Bilateral expiratory wheeze; no peripheral oedema.</p>
+
+            <h4>Investigations</h4>
+            <p class="doc-line"><span id="s-pcr">Respiratory viral PCR positive for rhinovirus; SARS-CoV-2 and influenza PCR negative.</span></p>
+            <p class="doc-line">Chest X-ray: no evidence of pneumonia.</p>
+            <p class="doc-line">Arterial blood gas: no significant respiratory acidosis.</p>
+
+            <h4>Clinical course</h4>
+            <p class="doc-line">Supplemental oxygen discontinued on day three.</p>
+            <p class="doc-line"><span id="s-o2dis">At discharge: SpO₂ 92–94% on room air.</span></p>
+            <p class="doc-line">Independently mobile; stable general condition.</p>
+
+            <h4>Medication at discharge</h4>
+            <p class="doc-line doc-sub">New or changed:</p>
+            <p class="doc-line"><span id="s-med1">Tiotropium/olodaterol inhaler — 2 inhalations once daily.</span></p>
+            <p class="doc-line"><span id="s-med2">Salbutamol inhaler — 1–2 inhalations as required for dyspnoea.</span></p>
+            <p class="doc-line"><span id="s-med3">Prednisone 40 mg once daily — complete a total course of 5 days.</span></p>
+            <p class="doc-line"><span id="s-med4">Amoxicillin/clavulanic acid 875/125 mg twice daily — complete a total course of 5 days.</span></p>
+            <p class="doc-line doc-sub">Pre-existing:</p>
+            <p class="doc-line"><span id="s-med5">Amlodipine 5 mg once daily.</span></p>
+
+            <h4>Recommendations</h4>
+            <p class="doc-line"><span id="s-fu1">GP follow-up within 7–14 days.</span></p>
+            <p class="doc-line">Reassess respiratory symptoms, exercise tolerance and oxygen saturation.</p>
+            <p class="doc-line">Review smoking status and inhaler technique.</p>
+            <p class="doc-line"><span id="s-fu2">Repeat pulmonary function testing in approximately 4–8 weeks.</span></p>
+            <p class="doc-line">Review maintenance therapy and vaccination status.</p>
+            <p class="doc-line">Consider pulmonary rehabilitation if limitations persist.</p>
+
+            <p class="doc-sign">Attending physician, Department of Internal Medicine</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="panel panel-fields" aria-labelledby="h-fields">
+        <h3 id="h-fields">Predefined fields read from the document</h3>
+        <p class="panel-hint">Values are copied from the source text. Open “View source” to see the supporting sentence.</p>
+
+        <dl class="fields">
+          <div class="field">
+            <dt>Admission and discharge</dt>
+            <dd>10 September 2026 — 14 September 2026</dd>
+            <button type="button" class="btn btn-link" data-source="s-dates">View source</button>
+          </div>
+          <div class="field">
+            <dt>Diagnosis</dt>
+            <dd>Acute exacerbation of COPD; GOLD 2 airflow obstruction</dd>
+            <button type="button" class="btn btn-link" data-source="s-dx">View source</button>
+          </div>
+          <div class="field">
+            <dt>Documented trigger</dt>
+            <dd>Most likely viral respiratory tract infection; rhinovirus PCR positive</dd>
+            <button type="button" class="btn btn-link" data-source="s-trigger s-pcr">View source</button>
+          </div>
+          <div class="field">
+            <dt>Oxygen</dt>
+            <dd>Admission: SpO₂ 88% room air; 92% with 2 L/min oxygen<br>Discharge: SpO₂ 92–94% room air</dd>
+            <button type="button" class="btn btn-link" data-source="s-o2adm s-o2dis">View source</button>
+          </div>
+          <div class="field">
+            <dt>Medication at discharge</dt>
+            <dd>
+              <button type="button" class="btn btn-toggle" id="medToggle" aria-expanded="false" aria-controls="medList">Show 5 entries</button>
+              <ul class="med-list" id="medList" hidden>
+                <li>Tiotropium/olodaterol — 2 inhalations once daily</li>
+                <li>Salbutamol — 1–2 inhalations as required</li>
+                <li>Prednisone 40 mg once daily — complete 5 days</li>
+                <li>Amoxicillin/clavulanic acid 875/125 mg twice daily — complete 5 days</li>
+                <li>Amlodipine 5 mg once daily — pre-existing</li>
+              </ul>
+            </dd>
+            <button type="button" class="btn btn-link" data-source="s-med1 s-med2 s-med3 s-med4 s-med5">View source</button>
+          </div>
+          <div class="field">
+            <dt>Hospital follow-up</dt>
+            <dd>GP follow-up within 7–14 days<br>Repeat pulmonary function testing in approximately 4–8 weeks
+              <button type="button" class="btn btn-toggle" id="recToggle" aria-expanded="false" aria-controls="recList">Show 4 further recommendations</button>
+              <ul class="med-list" id="recList" hidden>
+                <li>Reassess respiratory symptoms, exercise tolerance and oxygen saturation</li>
+                <li>Review smoking status and inhaler technique</li>
+                <li>Review maintenance therapy and vaccination status</li>
+                <li>Consider pulmonary rehabilitation if limitations persist</li>
+              </ul>
+            </dd>
+            <button type="button" class="btn btn-link" data-source="s-fu1 s-fu2">View source</button>
+          </div>
+          <div class="field field-open">
+            <dt>Not documented in this report</dt>
+            <dd>Exact date of the previous exacerbation · measurement date of the spirometry · whether the follow-up appointment has been booked</dd>
+            <span class="field-flag">Needs attention</span>
+          </div>
+        </dl>
+
+        <div class="actions">
+          <p class="action-note" id="reviewNote">Check each field against the source document, then verify the fields.</p>
+          <div class="action-row">
+            <button type="button" class="btn btn-primary" id="verifyBtn">Verify fields</button>
+            <button type="button" class="btn btn-primary" id="continueBtn" hidden>Continue with GP follow-up</button>
+            <div class="menu-wrap">
+              <button type="button" class="btn" id="otherBtn" aria-expanded="false" aria-controls="otherMenu">Other actions</button>
+              <ul class="menu" id="otherMenu" hidden>
+                <li><button type="button" data-alt="Referred for specialist review">Refer for specialist review</button></li>
+                <li><button type="button" data-alt="Missing information requested from the hospital">Request missing information</button></li>
+                <li><button type="button" data-alt="Redirected or declined with a documented reason">Redirect or decline with reason</button></li>
+              </ul>
+            </div>
+          </div>
+          <div class="followup" id="followupBox" hidden>
+            <h4>GP follow-up recorded in this demo session</h4>
+            <ul>
+              <li>GP review due by 28 September 2026 (within 14 days of discharge)</li>
+              <li>The GP remains responsible for the clinical and aftercare decisions</li>
+            </ul>
+            <button type="button" class="btn btn-primary" id="createBtn">Create COPD overview</button>
+          </div>
+        </div>
+      </section>
+    </div>
+  </section>
+
+  <!-- ============ 3 · COPD OVERVIEW ============ -->
+  <section class="view" id="view-overview" aria-labelledby="h-overview" hidden>
+    <div class="review-head">
+      <h2 id="h-overview">COPD overview</h2>
+      <p class="status status-done">Reviewed</p>
+    </div>
+
+    <div class="overview-wrap">
+      <article class="sheet" id="sheet">
+        <header class="sheet-head">
+          <div>
+            <h3>COPD overview for GP follow-up</h3>
+            <p>John Doe · born 14 March 1958 · Patient ID 104582</p>
+          </div>
+          <p class="sheet-meta" id="sheetMeta">Reviewed in demo session</p>
+        </header>
+
+        <div class="sheet-cols">
+          <section>
+            <h4>Latest hospital event</h4>
+            <p>Admission 10 September 2026 · discharge 14 September 2026 <span class="ref">[4]</span></p>
+            <p>Acute exacerbation of COPD; GOLD 2 airflow obstruction <span class="ref">[4]</span></p>
+            <p>Documented trigger: most likely viral respiratory tract infection; rhinovirus PCR positive <span class="ref">[4]</span></p>
+            <p>Oxygen on admission: SpO₂ 88% room air; 92% with 2 L/min oxygen <span class="ref">[4]</span></p>
+            <p>Oxygen at discharge: SpO₂ 92–94% room air <span class="ref">[4]</span></p>
+            <p>Condition at discharge: independently mobile, stable general condition <span class="ref">[4]</span></p>
+
+            <h4>COPD timeline</h4>
+            <p>2021 — COPD diagnosis documented <span class="ref">[1]</span></p>
+            <p>Previous 12 months, exact date not documented — one moderate exacerbation without hospital admission <span class="ref">[2] [4]</span></p>
+            <p>10–14 September 2026 — hospital admission for acute COPD exacerbation <span class="ref">[4]</span></p>
+
+            <h4>Latest documented pulmonary function</h4>
+            <p>FEV1 1.75 L (58% predicted) · FVC 3.42 L (88% predicted) · FEV1/FVC 0.51 <span class="ref">[3] [4]</span></p>
+            <p>Measurement date not available in the source document</p>
+          </section>
+
+          <section>
+            <h4>Medication documented at discharge</h4>
+            <p>Tiotropium/olodaterol — 2 inhalations once daily <span class="ref">[4]</span></p>
+            <p>Salbutamol — 1–2 inhalations as required <span class="ref">[4]</span></p>
+            <p>Prednisone 40 mg once daily — complete 5 days <span class="ref">[4]</span></p>
+            <p>Amoxicillin/clavulanic acid 875/125 mg twice daily — complete 5 days <span class="ref">[4]</span></p>
+            <p>Amlodipine 5 mg once daily — pre-existing <span class="ref">[4]</span></p>
+
+            <h4>Follow-up recommendations from the hospital</h4>
+            <p>GP follow-up within 7–14 days; repeat pulmonary function testing in approximately 4–8 weeks; reassess respiratory symptoms, exercise tolerance and oxygen saturation; review smoking status, inhaler technique, maintenance therapy and vaccination status; consider pulmonary rehabilitation if limitations persist <span class="ref">[4]</span></p>
+
+            <h4>GP ownership and follow-up</h4>
+            <p>GP review due by 28 September 2026</p>
+            <p>The GP remains responsible for the clinical and aftercare decisions.</p>
+
+            <h4>Open points for the GP</h4>
+            <p>Exact date of the previous exacerbation not documented <span class="ref">[2] [4]</span></p>
+            <p>Measurement date of the spirometry not available <span class="ref">[3]</span></p>
+            <p>Current medication after discharge to be confirmed with the patient</p>
+            <p>Follow-up appointment booking not documented</p>
+          </section>
+        </div>
+
+        <footer class="sheet-foot">
+          <p><strong>Sources:</strong> [1] GP problem list, this practice · [2] Previous COPD history, this practice · [3] Outpatient spirometry reference, external laboratory · [4] Hospital discharge report, Cantonal Hospital Zurich, 14 September 2026</p>
+          <p id="sheetStamp">Fields read from the listed sources and reviewed by the GP in this demo session.</p>
+        </footer>
+      </article>
+
+      <aside class="overview-side">
+        <h3>Document actions</h3>
+        <p class="meta">One page · built from the reviewed fields · no values added by the software</p>
+        <div class="side-actions">
+          <button type="button" class="btn btn-primary" id="saveBtn">Save to record</button>
+          <button type="button" class="btn" id="printBtn">Print overview</button>
+          <button type="button" class="btn btn-quiet" id="restartBtn">Start over</button>
+        </div>
+        <p class="status status-done" id="savedMsg" hidden>Saved in this demo session</p>
+        <p class="aftercare">The GP uses the reviewed overview to define and coordinate the patient’s aftercare plan outside AirBridge.</p>
+      </aside>
+    </div>
+  </section>
+</main>
+
+<p class="live-region" id="liveRegion" role="status" aria-live="polite"></p>
+
+<footer class="app-foot">
+  <p>AirBridge organizes authorized COPD documents available in a GP practice, together with a hospital discharge report, into one structured, chronological and source-linked overview. The GP reviews the information and remains responsible for every clinical and aftercare decision.</p>
+  <p>AirBridge does not diagnose, prescribe, recommend treatment, select medication, calculate risk or choose the aftercare plan.</p>
+</footer>
+
+<script src="app.js"></script>
+</body>
+</html>
