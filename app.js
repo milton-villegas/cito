@@ -1,4 +1,4 @@
-/* AirBridge — proof of concept.
+/* Cito — proof of concept.
    Rules-based field reading is represented by predefined fields in the markup:
    no network requests, no storage, no external libraries. */
 (function () {
@@ -146,7 +146,7 @@
     reviewNote.textContent = 'Fields verified by the GP against the source document on ' + when + '.';
     sheetMeta.textContent = 'Fields verified by the GP · ' + when;
     sheetStamp.textContent = 'Fields read from the listed sources and verified by the GP on ' + when
-      + ' in this demo session. AirBridge added no clinical interpretation.';
+      + ' in this demo session. Cito added no clinical interpretation.';
     continueBtn.focus();
     announce('Fields verified. You can continue with GP follow-up.');
   });

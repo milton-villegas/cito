@@ -1,4 +1,4 @@
-/* AirBridge — proof of concept. Static, offline, no external resources. */
+/* Cito — proof of concept. Static, offline, no external resources. */
 
 :root {
   --navy: #12395B;
@@ -218,7 +218,6 @@ main { padding: 20px 28px 8px; }
 
 .app-foot { padding: 18px 28px 26px; }
 .app-foot p { max-width: 1100px; font-size: 12.5px; line-height: 1.55; color: var(--ink-soft); }
-.app-foot p + p { margin-top: 5px; }
 
 /* ---------- narrower desktops ---------- */
 @media (max-width: 1180px) {

@@ -1,12 +1,13 @@
 <p align="center">
-  <img src="assets/airbridge-logo.png" alt="AirBridge" width="200">
+  <img src="assets/cito-logo.png" alt="Cito" width="200">
 </p>
 
-# AirBridge — interactive proof of concept
+# Cito — interactive proof of concept
 
-**Live demo: https://milton-villegas.github.io/airbridge-demo/**
+**Live demo: https://milton-villegas.github.io/cito/**
+**Repository: https://github.com/milton-villegas/cito**
 
-AirBridge is a rules-based proof of concept that organizes authorized COPD documents available in a GP practice, together with a hospital discharge report, into one structured, chronological and source-linked overview. The GP reviews the information and remains responsible for every clinical and aftercare decision.
+Cito is a rules-based proof of concept that organizes authorized COPD documents available in a GP practice, together with a hospital discharge report, into one structured, chronological and source-linked overview. The GP reviews the information and remains responsible for every clinical and aftercare decision.
 
 ## Proof of concept · synthetic data · not for clinical use
 
@@ -28,11 +29,25 @@ Three workflow views inside one restrained module:
 
 Unknown information stays unknown: the exact date of the previous exacerbation and the measurement date of the spirometry are shown as not documented, because the source documents do not contain them.
 
-## What AirBridge does not do
+## What Cito does not do
 
-AirBridge does not diagnose, prescribe, recommend treatment, select medication, calculate risk or choose the aftercare plan. It does not decide whether two documents describe the same episode, does not reconcile current medication and does not approve information clinically.
+Cito does not diagnose, prescribe, recommend treatment, select medication, calculate risk or choose the aftercare plan. It does not decide whether two documents describe the same episode, does not reconcile current medication and does not approve information clinically.
 
-The demo ends once the reviewed overview exists. The GP uses the reviewed overview to define and coordinate the patient's aftercare plan outside AirBridge, including any specialist, education, medication-support or home-care involvement.
+The demo ends once the reviewed overview exists. The GP uses the reviewed overview to define and coordinate the patient's aftercare plan outside Cito, including any specialist, education, medication-support or home-care involvement.
+
+## Demo video
+
+`Cito_Demo.mp4` is a screen recording of the real interface (not a separate mockup): the patient record opens, the hospital discharge report is reviewed, the supporting source sentence is highlighted, the fields are verified, GP follow-up is recorded, and the COPD overview is generated and saved. Specs: 1920×1080, 30 fps, ~33 seconds, no audio.
+
+To regenerate it after an interface change, from a machine with Python and a Chromium browser available through Playwright:
+
+```sh
+pip install playwright imageio-ffmpeg
+python -m playwright install chromium
+python record_cito_demo.py
+```
+
+`record_cito_demo.py` drives `index.html` with the real buttons (`#openDoc`, `#medToggle`, the `View source` link, `#verifyBtn`, `#continueBtn`, `#createBtn`, `#saveBtn`) at a readable pace, records the session, and encodes the result to `Cito_Demo.mp4` with `ffmpeg -r 30 -fps_mode cfr -c:v libx264 -crf 18 -an`.
 
 ## Run it locally
 
